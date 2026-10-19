@@ -13,12 +13,55 @@
 <link rel="icon" type="image/png" href="Abstract Charcoal and Teal D Emblem.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600;650;700&family=Chivo+Mono:wght@400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Mona+Sans:wght@400;500;600;650;700&family=Chivo+Mono:wght@400&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+.loading-screen{display:none}
+.js-boot:not(.is-ready) .site-header,.js-boot:not(.is-ready) main,.js-boot:not(.is-ready) footer{visibility:hidden}
+.show-skeleton .loading-screen{display:block;position:fixed;inset:0;z-index:200;background:#EBEFFE;color:#182645;overflow:hidden;font-family:Arial,sans-serif}
+.show-skeleton body{overflow:hidden}
+.loading-shell{max-width:1440px;margin:auto;padding:24px 56px}
+.skeleton-nav{display:flex;justify-content:space-between;align-items:center;height:64px;border-bottom:1px solid #C8D4F7;padding-bottom:24px}
+.skeleton-block{position:relative;overflow:hidden;background:#DDE4FA;border-radius:8px}
+.skeleton-block::after{content:'';position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(100deg,transparent,#ffffff80,transparent);animation:skeleton-shimmer 1.6s ease-in-out infinite}
+.skeleton-brand{width:170px;height:32px}.skeleton-menu{width:440px;height:48px}.skeleton-cta{width:150px;height:48px}
+.skeleton-hero{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;align-items:center;padding:56px 0 32px}
+.skeleton-title{height:72px;width:100%}.skeleton-caption{height:16px;width:70%;margin-top:24px}.skeleton-photo{aspect-ratio:1;border-radius:46% 46% 16px 16px}.skeleton-bottom{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:32px}.skeleton-name{height:48px;width:80%}.skeleton-line{height:14px;margin-bottom:16px}.skeleton-line:last-child{width:70%}.skeleton-buttons{display:flex;gap:14px;margin-top:24px}.skeleton-button{width:190px;height:64px}.loading-status{font-size:13px;color:#4D5E80;margin-top:32px}
+@keyframes skeleton-shimmer{to{transform:translateX(100%)}}
+@media(max-width:1100px){.skeleton-cta{display:none}.skeleton-menu{width:46%}.loading-shell{padding-inline:32px}}
+@media(max-width:767px){.loading-shell{padding:16px 20px}.skeleton-nav{height:64px}.skeleton-menu{width:74px;height:44px}.skeleton-hero{grid-template-columns:1fr 1fr;gap:24px 20px;padding-top:32px}.skeleton-title{height:42px}.skeleton-caption{height:12px;width:85%;margin-top:16px}.skeleton-photo{grid-column:1/-1;grid-row:2;width:76%;justify-self:center}.skeleton-bottom{grid-template-columns:1fr;gap:24px;margin-top:0}.skeleton-name{height:42px}.skeleton-buttons .skeleton-button{width:50%;height:60px}}
+@media(prefers-reduced-motion:reduce){.skeleton-block::after{animation:none}}
+</style>
+<script>
+// Show a real skeleton only after a slow start; always release the page.
+document.documentElement.classList.add('js-boot');
+window.portfolioBoot = {
+  done: false,
+  finish: function () {
+    if (this.done) return;
+    this.done = true;
+    clearTimeout(this.delay);
+    clearTimeout(this.deadline);
+    document.documentElement.classList.remove('show-skeleton');
+    document.documentElement.classList.add('is-ready');
+    document.querySelector('.loading-screen')?.setAttribute('aria-hidden','true');
+  }
+};
+window.portfolioBoot.delay = setTimeout(function () {
+  if (window.portfolioBoot.done) return;
+  document.documentElement.classList.add('show-skeleton');
+  document.querySelector('.loading-screen')?.setAttribute('aria-hidden','false');
+}, 400);
+window.portfolioBoot.deadline = setTimeout(function () { window.portfolioBoot.finish(); }, 6000);
+</script>
+<link id="portfolio-styles" rel="preload" as="style" href="styles.css" onload="this.onload=null;this.rel='stylesheet';window.portfolioStylesReady=true;window.dispatchEvent(new Event('portfolio:styles'))" onerror="window.portfolioBoot.finish()">
+<noscript><link rel="stylesheet" href="styles.css"></noscript>
 <script src="script.js" defer>
 </script>
 </head>
 <body>
+<div class="loading-screen" role="status" aria-live="polite" aria-hidden="true">
+<div class="loading-shell"><div aria-hidden="true"><div class="skeleton-nav"><div class="skeleton-block skeleton-brand"></div><div class="skeleton-block skeleton-menu"></div><div class="skeleton-block skeleton-cta"></div></div><div class="skeleton-hero"><div><div class="skeleton-block skeleton-title"></div><div class="skeleton-block skeleton-caption"></div></div><div class="skeleton-block skeleton-photo"></div><div><div class="skeleton-block skeleton-title"></div><div class="skeleton-block skeleton-caption"></div></div></div><div class="skeleton-bottom"><div class="skeleton-block skeleton-name"></div><div><div class="skeleton-block skeleton-line"></div><div class="skeleton-block skeleton-line"></div><div class="skeleton-block skeleton-line"></div><div class="skeleton-buttons"><div class="skeleton-block skeleton-button"></div><div class="skeleton-block skeleton-button"></div></div></div></div></div><p class="loading-status">Loading portfolio…</p></div>
+</div>
 <a class="skip" href="#main">Skip to content</a>
 <header class="site-header">
 <nav class="wrap nav-wrap" aria-label="Main navigation">
@@ -32,29 +75,29 @@
 <button class="menu-toggle" aria-controls="navigation" aria-expanded="false" type="button">Menu +</button>
 <ul class="nav-links" id="navigation">
 <li>
-<a href="#home" aria-current="location">Home</a>
+<a class="nav-button" href="#home" aria-current="location"><span class="nav-label"><span>Home</span><span aria-hidden="true">Home</span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </li>
 <li>
-<a href="#projects">Projects</a>
+<a class="nav-button" href="#projects"><span class="nav-label"><span>Projects</span><span aria-hidden="true">Projects</span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </li>
 <li>
-<a href="#about">About</a>
+<a class="nav-button" href="#about"><span class="nav-label"><span>About</span><span aria-hidden="true">About</span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </li>
 <li>
-<a href="#skills">Skills</a>
+<a class="nav-button" href="#skills"><span class="nav-label"><span>Skills</span><span aria-hidden="true">Skills</span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </li>
 <li>
-<a href="#contact">Contact</a>
+<a class="nav-button" href="#contact"><span class="nav-label"><span>Contact</span><span aria-hidden="true">Contact</span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </li>
+<li class="mobile-contact"><a class="project-button cta-button cta-primary cta-mobile" href="mailto:Ebraali2003@gmail.com"><span class="project-button-face"><span class="project-button-label"><span>Let's talk</span><span aria-hidden="true">Let's talk</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a></li>
 </ul>
-<a class="header-contact" href="mailto:Ebraali2003@gmail.com">Let's talk <span aria-hidden="true">↗</span>
-</a>
+<a class="project-button cta-button header-contact cta-nav cta-primary" href="mailto:Ebraali2003@gmail.com"><span class="project-button-face"><span class="project-button-label"><span>Let's talk</span><span aria-hidden="true">Let's talk</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </nav>
 </header>
 <main id="main" tabindex="-1">
 <section class="hero" id="home" aria-label="Introduction" tabindex="-1">
 <div class="wrap">
-<div class="hero-stage" data-portrait="developer">
+<div class="hero-stage" data-portrait="split">
 <div class="discipline">
 <h2><button class="role-switch" type="button" data-role="designer" aria-pressed="false" aria-controls="hero-portrait">Designer<span aria-hidden="true">.</span></button></h2>
 <p>UX/UI design<br>Research. Interaction. Clarity.</p>
@@ -67,7 +110,7 @@
 </div>
 </div>
 <div class="discipline right">
-<h2><button class="role-switch" type="button" data-role="developer" aria-pressed="true" aria-controls="hero-portrait">Developer<span aria-hidden="true">.</span></button></h2>
+<h2><button class="role-switch" type="button" data-role="developer" aria-pressed="false" aria-controls="hero-portrait">Developer<span aria-hidden="true">.</span></button></h2>
 <p>Computer science background<br>Logic. Structure. Possibility.</p>
 </div>
 </div>
@@ -79,10 +122,8 @@
 <div class="hero-copy">
 <p>I design intuitive, user-centered digital experiences by combining UX research, interaction design, and technical knowledge. My background in computer science helps me connect user needs with practical, scalable solutions.</p>
 <div class="actions">
-<a class="button primary" href="#projects">View My Work <span class="arrow" aria-hidden="true">↘</span>
-</a>
-<a class="button" href="./Ebrahim_Resume__UX_.pdf" download="Ebrahim_Resume__UX_.pdf">Download CV <span aria-hidden="true">↓</span>
-</a>
+<a class="project-button cta-button cta-primary" href="#projects"><span class="project-button-face"><span class="project-button-label"><span>View My Work</span><span aria-hidden="true">View My Work</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h10v10M7 17 17 7"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
+<a class="project-button cta-button cta-secondary" href="./Ebrahim_Resume__UX_.pdf" download="Ebrahim_Resume__UX_.pdf"><span class="project-button-face"><span class="project-button-label"><span>Download CV</span><span aria-hidden="true">Download CV</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </div>
 </div>
 </div>
@@ -446,8 +487,7 @@
 <div class="contact-intro">
 <p>Have a project, opportunity, or product challenge? I'd love to hear from you.</p>
 <div class="actions">
-<a class="button primary" href="mailto:Ebraali2003@gmail.com">Get In Touch <span class="arrow" aria-hidden="true">↗</span>
-</a>
+<a class="project-button cta-button cta-primary cta-contact" href="mailto:Ebraali2003@gmail.com"><span class="project-button-face"><span class="project-button-label"><span>Get In Touch</span><span aria-hidden="true">Get In Touch</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </div>
 </div>
 </div>
@@ -480,9 +520,10 @@
 <span>Ebrahim Ali.</span>
 </a>
 <p>© 2026 Ebrahim Ali. All rights reserved.</p>
-<a href="#home">Back to top ↑</a>
+<a class="project-button cta-button footer-top" href="#home"><span class="project-button-face"><span class="project-button-label"><span>Back to top</span><span aria-hidden="true">Back to top</span></span><span class="project-button-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6"/></svg></span></span><span class="button-handles" aria-hidden="true"><i></i><i></i><i></i><i></i></span></a>
 </div>
 </footer>
 </body>
 </html>
+
 

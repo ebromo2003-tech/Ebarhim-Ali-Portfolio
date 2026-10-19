@@ -1,11 +1,21 @@
 /* Progressive enhancement: every section and destination works without JavaScript. */
 document.body.classList.add('js');
+// Only the first-screen images and core stylesheet gate the initial skeleton.
+const criticalImages = [...document.querySelectorAll('.portrait img')];
+const imageReady = image => image.complete ? Promise.resolve() : new Promise(resolve => {
+  image.addEventListener('load', resolve, {once:true});
+  image.addEventListener('error', resolve, {once:true});
+});
+const styleReady = window.portfolioStylesReady ? Promise.resolve() : new Promise(resolve => {
+  window.addEventListener('portfolio:styles', resolve, {once:true});
+});
+Promise.all([styleReady, ...criticalImages.map(imageReady)]).then(() => window.portfolioBoot?.finish());
 // The same portrait switch works with a pointer, keyboard focus, and touch.
 const heroStage = document.querySelector('.hero-stage');
 const roleSwitches = [...document.querySelectorAll('.role-switch')];
 function selectPortrait(role) {
   heroStage.dataset.portrait = role;
-  heroStage.style.setProperty('--portrait-reveal', role === 'designer' ? '100%' : '0%');
+  heroStage.style.setProperty('--portrait-reveal', role === 'split' ? '50%' : role === 'designer' ? '100%' : '0%');
   roleSwitches.forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.role === role));
   });
@@ -34,15 +44,29 @@ heroStage.addEventListener('pointerleave', event => {
   portraitFrameRequest = 0;
   if (event.pointerType !== 'touch') {
     const focusedRole = roleSwitches.find(button => button === document.activeElement);
-    selectPortrait(focusedRole?.dataset.role || 'developer');
+    selectPortrait(focusedRole?.dataset.role || 'split');
   }
 });
 heroStage.addEventListener('focusout', event => {
-  if (!heroStage.contains(event.relatedTarget) && !heroStage.matches(':hover')) selectPortrait('developer');
+  if (!heroStage.contains(event.relatedTarget) && !heroStage.matches(':hover')) selectPortrait('split');
 });
+let touchOrigin = null;
+heroStage.addEventListener('pointerdown', event => {
+  if (event.pointerType === 'touch') touchOrigin = {x:event.clientX,y:event.clientY};
+});
+heroStage.addEventListener('pointerup', event => {
+  if (event.pointerType !== 'touch' || !touchOrigin || event.target.closest('.role-switch')) return;
+  const distance = Math.hypot(event.clientX-touchOrigin.x,event.clientY-touchOrigin.y);
+  touchOrigin = null;
+  if (distance > 12) return;
+  const bounds = heroStage.getBoundingClientRect();
+  selectPortrait(event.clientX < bounds.left+bounds.width/2 ? 'designer' : 'developer');
+});
+heroStage.addEventListener('pointercancel', () => { touchOrigin = null; });
 const menuButton = document.querySelector('.menu-toggle');
 const menu = document.querySelector('.nav-links');
-const navLinks = [...menu.querySelectorAll('a')];
+const navLinks = [...menu.querySelectorAll('a[href^="#"]')];
+menu.querySelector('.cta-mobile').addEventListener('click', () => closeMenu());
 function closeMenu(returnFocus = false) {
   menuButton.setAttribute('aria-expanded', 'false');
   menuButton.textContent = 'Menu +';
