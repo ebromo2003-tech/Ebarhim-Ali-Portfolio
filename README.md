@@ -27,7 +27,9 @@ The five navigation links are larger controls with rolling labels, blue fills, k
 
 Project links are maintained directly in their corresponding HTML articles. They open in new tabs. The trailing `and` typo in the supplied Wajba URL has been removed.
 
-The CV links use the native download attribute and the original `Ebrahim_Resume__UX_.pdf`. Upload this PDF alongside the site.
+Both CV links use the original `Ebrahim_Resume__UX_.pdf`. On desktop-sized windows (1024px or wider) with a fine pointer and hover support, the PDF opens in a new tab with the browser's PDF preview and download controls. Smaller windows and touch devices use the native download attribute. This adapts when the window is resized, and downloading remains the no-JavaScript fallback. Upload the PDF alongside the site.
+
+Let's talk opens a concise hiring email draft, with editable role/company placeholders in the subject and fields for role details, work arrangement and the sender's contact information. Get In Touch opens a separate freelance project/meeting draft, including an editable project title, scope, timeline/budget, additional details, meeting time/location and sender contact fields. Both drafts are static, URL-encoded mailto links, so they also work without JavaScript. The generic email address link remains untemplated. Opening a draft does not send a message.
 
 The degree title follows the supplied resume: B.Sc. in Computer Science. Skills, experience and certification copy also follow the resume; no project metrics or seniority claims have been added.
 

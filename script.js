@@ -1,5 +1,27 @@
 /* Progressive enhancement: every section and destination works without JavaScript. */
 document.body.classList.add('js');
+// Desktop readers preview the PDF; smaller screens and touch devices download it.
+const desktopCvPreview = matchMedia('(min-width: 1024px) and (hover: hover) and (pointer: fine)');
+const cvLinks = [...document.querySelectorAll('[data-cv-link]')];
+function updateCvLinks() {
+  cvLinks.forEach(link => {
+    if (desktopCvPreview.matches) {
+      link.removeAttribute('download');
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.title = 'Preview PDF in a new tab; download using the PDF viewer controls';
+      link.setAttribute('aria-description', 'Opens a PDF in a new tab with a download option.');
+    } else {
+      link.download = 'Ebrahim_Resume__UX_.pdf';
+      link.removeAttribute('target');
+      link.removeAttribute('rel');
+      link.title = 'Download Ebrahim Ali’s CV as a PDF';
+      link.setAttribute('aria-description', 'Downloads the CV as a PDF.');
+    }
+  });
+}
+updateCvLinks();
+desktopCvPreview.addEventListener('change', updateCvLinks);
 // Only the first-screen images and core stylesheet gate the initial skeleton.
 const criticalImages = [...document.querySelectorAll('.portrait img')];
 const imageReady = image => image.complete ? Promise.resolve() : new Promise(resolve => {
