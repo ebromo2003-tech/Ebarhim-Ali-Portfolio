@@ -2,6 +2,8 @@
 
 A one-page, buildless portfolio. Open `index.html` or `Ebrahim Portfolio.html` to view it locally. Keep the supplied images and PDF beside the HTML files.
 
+Branding uses `Glossy Blue Ribbon Loop Emblem.png` in the header, footer and favicon. The logo is displayed with its original proportions and without cropping. The Document Organizer banner and Prototype button both link to the Figma PROJECT-1 prototype (`dua4YL4MAZnrSSY4bpByHo`).
+
 ## Editing
 
 - `index.html`: accessible content, project destinations, skills and contact details. All content works without JavaScript.
