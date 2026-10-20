@@ -13,13 +13,65 @@ Promise.all([styleReady, ...criticalImages.map(imageReady)]).then(() => window.p
 // The same portrait switch works with a pointer, keyboard focus, and touch.
 const heroStage = document.querySelector('.hero-stage');
 const roleSwitches = [...document.querySelectorAll('.role-switch')];
+const portraitMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let portraitReveal = 50;
+let portraitTarget = 50;
+let portraitVelocity = 0;
+let portraitAnimation = 0;
+let portraitTime = 0;
+function paintPortrait() {
+  heroStage.style.setProperty('--portrait-reveal', portraitReveal.toFixed(4) + '%');
+  // The blend narrows to zero at either endpoint, keeping both full portraits crisp.
+  const feather = Math.min(1.7, portraitReveal * .35, (100 - portraitReveal) * .35);
+  heroStage.style.setProperty('--portrait-feather', feather.toFixed(4) + '%');
+}
+function animatePortrait(time) {
+  const dt = Math.min((time - portraitTime) / 1000, .05);
+  portraitTime = time;
+  // An analytic critically damped spring preserves velocity during rapid reversals.
+  const frequency = 13;
+  const offset = portraitReveal - portraitTarget;
+  const helper = portraitVelocity + frequency * offset;
+  const decay = Math.exp(-frequency * dt);
+  portraitReveal = Math.max(0, Math.min(100, portraitTarget + (offset + helper * dt) * decay));
+  portraitVelocity = (portraitVelocity - frequency * helper * dt) * decay;
+  if (Math.abs(portraitReveal - portraitTarget) < .025 && Math.abs(portraitVelocity) < .15) {
+    portraitReveal = portraitTarget;
+    portraitVelocity = 0;
+    portraitAnimation = 0;
+    paintPortrait();
+    return;
+  }
+  paintPortrait();
+  portraitAnimation = requestAnimationFrame(animatePortrait);
+}
 function selectPortrait(role) {
+  const target = role === 'split' ? 50 : role === 'designer' ? 100 : 0;
+  if (heroStage.dataset.portrait === role && portraitTarget === target) return;
   heroStage.dataset.portrait = role;
-  heroStage.style.setProperty('--portrait-reveal', role === 'split' ? '50%' : role === 'designer' ? '100%' : '0%');
+  portraitTarget = target;
   roleSwitches.forEach(button => {
     button.setAttribute('aria-pressed', String(button.dataset.role === role));
   });
+  if (portraitMotion.matches) {
+    cancelAnimationFrame(portraitAnimation);
+    portraitAnimation = 0;
+    portraitReveal = portraitTarget;
+    portraitVelocity = 0;
+    paintPortrait();
+  } else if (!portraitAnimation) {
+    portraitTime = performance.now();
+    portraitAnimation = requestAnimationFrame(animatePortrait);
+  }
 }
+portraitMotion.addEventListener('change', () => {
+  if (!portraitMotion.matches) return;
+  cancelAnimationFrame(portraitAnimation);
+  portraitAnimation = 0;
+  portraitReveal = portraitTarget;
+  portraitVelocity = 0;
+  paintPortrait();
+});
 roleSwitches.forEach(button => {
   button.addEventListener('focus', () => selectPortrait(button.dataset.role));
   button.addEventListener('click', () => selectPortrait(button.dataset.role));
@@ -30,7 +82,11 @@ let pointerRole = 'developer';
 function updatePointerRole(event) {
   if (event.pointerType === 'touch') return;
   const bounds = heroStage.getBoundingClientRect();
-  pointerRole = event.clientX < bounds.left + bounds.width / 2 ? 'designer' : 'developer';
+  const center = bounds.left + bounds.width / 2;
+  const tolerance = Math.min(18, bounds.width * .035);
+  // A small central dead band prevents flicker from tiny pointer movements.
+  pointerRole = event.clientX < center - tolerance ? 'designer'
+    : event.clientX > center + tolerance ? 'developer' : heroStage.dataset.portrait;
   if (portraitFrameRequest) return;
   portraitFrameRequest = requestAnimationFrame(() => {
     selectPortrait(pointerRole);
@@ -43,7 +99,7 @@ heroStage.addEventListener('pointerleave', event => {
   cancelAnimationFrame(portraitFrameRequest);
   portraitFrameRequest = 0;
   if (event.pointerType !== 'touch') {
-    const focusedRole = roleSwitches.find(button => button === document.activeElement);
+    const focusedRole = roleSwitches.find(button => button === document.activeElement && button.matches(':focus-visible'));
     selectPortrait(focusedRole?.dataset.role || 'split');
   }
 });

@@ -933,6 +933,9 @@ footer{
   isolation:isolate;
 }
 .portrait-frame{
+  /* Measured eye/nose/mouth registration: uniform scale + rotation + translation. */
+  --portrait-photo-transform:translate(-6.928027%,-7.246613%) matrix(1.1,0,0,1.1,0,0);
+  --portrait-art-transform:translate(-8.067831%,-1.592698%) matrix(1.07431349,-.01497971,.01497971,1.07431349,0,0);
   position:relative;
   width:100%;
   aspect-ratio:1;
@@ -963,26 +966,23 @@ footer{
   max-width:none;
   object-fit:cover;
   object-position:center;
+  transform-origin:0 0;
   pointer-events:none;
 }
-.portrait-photo{transform:translate(2.6%,-4.3%) scale(1.1)}
-.portrait-art{transform:scale(1.06)}
+.portrait-photo{transform:var(--portrait-photo-transform)}
+.portrait-art{transform:var(--portrait-art-transform)}
 .portrait-layer-art{
   clip-path:inset(0 calc(100% - var(--portrait-reveal,50%)) 0 0);
-  transition:clip-path .78s cubic-bezier(.22,.8,.18,1);
+  transition:none;
   z-index:1;
 }
-.portrait-seam{
-  position:absolute;
-  left:var(--portrait-reveal,50%);
-  top:0;
-  bottom:0;
-  width:1px;
-  background:#ffffffb3;
-  box-shadow:0 0 12px #ffffff80;
-  transition:left .78s cubic-bezier(.22,.8,.18,1);
-  z-index:2;
-  pointer-events:none;
+@supports (mask-image:linear-gradient(to right,#000,transparent)){
+  .portrait-layer-art{
+    clip-path:none;
+    mask-image:linear-gradient(to right,#000 calc(var(--portrait-reveal,50%) - var(--portrait-feather,1.7%)),transparent calc(var(--portrait-reveal,50%) + var(--portrait-feather,1.7%)));
+    mask-repeat:no-repeat;
+    mask-size:100% 100%;
+  }
 }
 .hero-stage[data-portrait="designer"] .discipline:not(.right) .role-switch,
 .hero-stage[data-portrait="developer"] .discipline.right .role-switch{color:var(--action)}
@@ -1140,8 +1140,8 @@ footer{
     transform:none!important
   }
   /* Static image registration is geometry, not animation. */
-  .portrait-photo{transform:translate(2.6%,-4.3%) scale(1.1)!important}
-  .portrait-art{transform:scale(1.06)!important}
+  .portrait-photo{transform:var(--portrait-photo-transform)!important}
+  .portrait-art{transform:var(--portrait-art-transform)!important}
   .project-button-label>span[aria-hidden],.project-button-arrow svg:last-child{display:none}
   .nav-label>span[aria-hidden]{display:none}
 }

@@ -11,7 +11,9 @@ Branding uses `Glossy Blue Ribbon Loop Emblem.png` in the header, footer and fav
 - `styles.css`: palette, typography, component styles, responsive layouts and reduced-motion rules.
 - `script.js`: mobile menu, section navigation state and optional entry animations.
 
-The portrait initially shows half `Painterly Gulf Portrait with Blue Brushstrokes.png` and half `1778496923520.png`. The entire left half of the hero selects the artwork; the right half selects the photo. Leaving the hero restores the split unless a role button still has keyboard focus. Tapping either half also selects its image on touch devices. Both layers share one square crop frame and an inset border. Static crop registration aligns the faces while a reversible horizontal wipe changes the artwork. Reduced motion disables animations while retaining image alignment.
+The portrait initially shows half `Painterly Gulf Portrait with Blue Brushstrokes.png` and half `1778496923520.png`. The entire left half of the hero selects the artwork; the right half selects the photo. Leaving the hero restores the split unless a role button still has keyboard focus. Tapping either half also selects its image on touch devices. Both layers share one square crop frame and an inset border.
+
+Eye, nose and mouth positions were measured locally to register the two faces with uniform scaling, a slight rotation and translation. The original PNG files are unchanged; the site applies fixed responsive CSS transforms. A feathered mask blends the center instead of drawing a hard dividing line. A critically damped animation retains its velocity through rapid reversals, while a small central dead band prevents hover flicker. Reduced motion changes the selected image immediately without changing its registration. No face-analysis library, model or image upload is used by the published site.
 
 A lightweight entry animation follows first-screen readiness. A page-shaped skeleton appears only if core styling or the hero images take more than 400ms to load. It clears as soon as those resources settle, with a six-second fail-safe even if the main script fails. Project images and fonts do not gate it. Content remains available without JavaScript.
 
@@ -46,5 +48,7 @@ Also checked: actual CV browser download (filename and bytes match the original)
 The current checks also cover pointer selection in empty space across both hero halves, intermediate wipe animation, identical portrait-layer bounds, the shared inset border, touch and keyboard portrait selection, 37 sourced SVG icons, minimum project-button heights, and hover feedback. Portrait registration and the new buttons/icons were reviewed in Chrome screenshots.
 
 Additional checks exercise slow-loading skeleton appearance/recovery, the six-second fallback with the app script blocked, the initial 50/50 portrait on all seven viewport widths, the five animated navigation links, and the footer's return-to-top action.
+
+The portrait-specific checks also measure rendered landmark registration, confirm fixed image bounds through every transition, exercise rapid reversals and central pointer jitter, and verify touch selection and reduced-motion geometry at all seven viewport widths.
 
 External Figma/Canva destination permissions and Lighthouse scores were not measured. Local QA tools, screenshots, original-file backup and detailed results live in the ignored `.qa/` directory and are not required for deployment.
